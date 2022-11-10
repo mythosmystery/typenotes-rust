@@ -35,9 +35,9 @@ async fn post_graphql_handler(
 
 #[rocket::main]
 async fn main() {
-    let repo = MongoRepo::new().await;
+    let ctx = init_context().await;
     let _ = rocket::build()
-        .manage(Context { db: repo.db })
+        .manage(ctx)
         .manage(Schema::new(
             Query,
             Mutation,
@@ -50,4 +50,14 @@ async fn main() {
         .launch()
         .await
         .expect("server to launch");
+}
+
+async fn init_context() -> Context {
+    let mongo_repo = MongoRepo::new().await;
+    let user_repo = db::user_repo::UserRepo::new(&mongo_repo);
+
+    Context {
+        mongo_repo,
+        user_repo,
+    }
 }
