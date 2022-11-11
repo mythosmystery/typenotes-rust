@@ -1,2 +1,2 @@
-pub mod note;
-pub mod user;
+pub mod note_model;
+pub mod user_model;

@@ -55,9 +55,11 @@ async fn main() {
 async fn init_context() -> Context {
     let mongo_repo = MongoRepo::new().await;
     let user_repo = db::user_repo::UserRepo::new(&mongo_repo);
+    let note_repo = db::note_repo::NoteRepo::new(&mongo_repo);
 
     Context {
         mongo_repo,
         user_repo,
+        note_repo,
     }
 }
