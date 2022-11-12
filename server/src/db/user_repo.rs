@@ -3,7 +3,13 @@ use mongodb::{
     Collection,
 };
 
-use crate::models::user_model::{NewUser, User};
+use crate::{
+    auth::Token,
+    models::{
+        auth_model::AuthResult,
+        user_model::{NewUser, User},
+    },
+};
 
 use super::mongo::MongoRepo;
 
@@ -43,10 +49,25 @@ impl UserRepo {
         email: String,
         name: String,
         password: String,
-    ) -> Result<User, Box<dyn std::error::Error>> {
+    ) -> Result<AuthResult, Box<dyn std::error::Error>> {
         let hashed_password = bcrypt::hash(password, bcrypt::DEFAULT_COST)?;
         let user = User::new(email, name, hashed_password);
         self.collection.insert_one(&user, None).await?;
-        Ok(user)
+        let token = Token::new(user.id.clone()).to_string()?;
+        Ok(AuthResult { user, token })
+    }
+
+    pub async fn login(
+        &self,
+        email: String,
+        password: String,
+    ) -> Result<AuthResult, Box<dyn std::error::Error>> {
+        let user = self.find(doc! {"email": email}).await?;
+        if bcrypt::verify(password, &user.hashed_password)? {
+            let token = Token::new(user.id.clone()).to_string()?;
+            Ok(AuthResult { user, token })
+        } else {
+            Err("Invalid password".into())
+        }
     }
 }

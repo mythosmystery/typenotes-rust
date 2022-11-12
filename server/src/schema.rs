@@ -4,6 +4,7 @@ use mongodb::bson::doc;
 use crate::{
     db::{mongo::MongoRepo, note_repo::NoteRepo, user_repo::UserRepo},
     models::{
+        auth_model::AuthResult,
         note_model::{NewNote, Note},
         user_model::{NewUser, User},
     },
@@ -15,6 +16,7 @@ pub struct Context {
     pub mongo_repo: MongoRepo,
     pub user_repo: UserRepo,
     pub note_repo: NoteRepo,
+    pub user_id: Option<String>,
 }
 
 impl juniper::Context for Context {}
@@ -51,5 +53,18 @@ impl Mutation {
 
     async fn create_note(context: &Context, data: NewNote) -> FieldResult<Note> {
         Ok(context.note_repo.create(data).await?)
+    }
+
+    async fn register(
+        context: &Context,
+        email: String,
+        name: String,
+        password: String,
+    ) -> FieldResult<AuthResult> {
+        Ok(context.user_repo.register(email, name, password).await?)
+    }
+
+    async fn login(context: &Context, email: String, password: String) -> FieldResult<AuthResult> {
+        Ok(context.user_repo.login(email, password).await?)
     }
 }

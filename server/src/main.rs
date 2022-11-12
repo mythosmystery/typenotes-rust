@@ -1,3 +1,4 @@
+mod auth;
 mod db;
 mod models;
 mod schema;
@@ -12,7 +13,7 @@ use crate::db::mongo::MongoRepo;
 
 #[rocket::get("/")]
 fn graphiql() -> content::RawHtml<String> {
-    juniper_rocket::graphiql_source("/graphql", None)
+    juniper_rocket::playground_source("/graphql", None)
 }
 
 #[rocket::get("/graphql?<request>")]
@@ -30,6 +31,7 @@ async fn post_graphql_handler(
     request: juniper_rocket::GraphQLRequest,
     schema: &State<Schema>,
 ) -> juniper_rocket::GraphQLResponse {
+    println!("request: {:?}", request);
     request.execute(&*schema, &*context).await
 }
 
@@ -61,5 +63,6 @@ async fn init_context() -> Context {
         mongo_repo,
         user_repo,
         note_repo,
+        user_id: None,
     }
 }

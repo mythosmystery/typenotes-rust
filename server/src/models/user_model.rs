@@ -33,8 +33,8 @@ impl User {
             email,
             hashed_password,
             account_type: AccountType::User,
-            created_at: DateTime::now().to_string(),
-            updated_at: DateTime::now().to_string(),
+            created_at: DateTime::now().try_to_rfc3339_string().unwrap(),
+            updated_at: DateTime::now().try_to_rfc3339_string().unwrap(),
         }
     }
 }

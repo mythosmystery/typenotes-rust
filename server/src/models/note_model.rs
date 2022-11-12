@@ -44,8 +44,8 @@ impl NewNote {
             content: self.content,
             note_type: self.note_type,
             user_id: self.user_id,
-            created_at: DateTime::now().to_string(),
-            updated_at: DateTime::now().to_string(),
+            created_at: DateTime::now().try_to_rfc3339_string().unwrap(),
+            updated_at: DateTime::now().try_to_rfc3339_string().unwrap(),
         }
     }
 }

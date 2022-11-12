@@ -7,8 +7,12 @@ edition = "2021"
 
 [dependencies]
 bcrypt = "0.13.0"
+chrono = "0.4.22"
+hmac = "0.12.1"
+jsonwebtoken = "8.1.1"
 juniper = "0.15.10"
 juniper_rocket = "0.8.2"
 mongodb = "2.3.1"
 rocket = "0.5.0-rc.2"
 serde = "1.0.147"
+sha2 = "0.10.6"
